@@ -1,13 +1,6 @@
 import { ResizeMode, Video } from 'expo-av'
 import React, { useEffect, useRef, useState } from 'react'
-import {
-  FlatList,
-  TouchableOpacity,
-  View,
-  Image,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native'
+import { FlatList, View, ActivityIndicator, RefreshControl } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import CardGroups from '~/components/Page/CardGroups'
 import CardChannels from '~/components/Page/CardChannels'
@@ -120,7 +113,13 @@ export default function Page() {
       </View>
 
       {videoLoading && selectedChannelUrl && (
-        <View className="absolute h-full w-full items-center justify-center bg-black opacity-60">
+        <View
+          onTouchEnd={() => {
+            videoRef.current?.unloadAsync()
+            setSelectedChannelUrl('')
+          }}
+          className="absolute h-full w-full items-center justify-center bg-black opacity-60"
+        >
           <ActivityIndicator size="large" color="white" />
         </View>
       )}
@@ -132,6 +131,7 @@ export default function Page() {
         }}
         resizeMode={ResizeMode.CONTAIN}
         onError={() => {
+          setVideoLoading(false)
           Toast({
             title: 'Error',
             message: 'Something went wrong',
